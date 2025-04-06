@@ -26,15 +26,22 @@
                     <input type="password" name="password" placeholder="Password" required />
                     <input type="text" name="primary_phone_number" placeholder="Phone Number" required />
     
-                    <h4 class="user-register-labels">Name and Date of Birth:</h4>
-                    <input type="text" name="fname" placeholder="First Name" required />
-                    <input type="text" name="lname" placeholder="Last Name" required />
+                    <h4 class="user-register-labels">Name:</h4>
+                    <input type="text" name="first_name" placeholder="First Name" required />
+                    <input type="text" name="last_name" placeholder="Last Name" required />
+
+                    <h4 class="user-register-labels">Date of Birth:</h4>
                     <input type="date" name="date_of_birth" required />
     
                     <button class="signup-button" type="submit">Signup</button>
+
+                    {% if success %}
+                        <p style="color: green; text-align: center; padding-top: 10px;">{{ success }}</p>
+                    {% endif %}
+
                 </form>
     
-                <a id="back-button" href="/index.html">Go Back</a>
+                <a id="back-button" href="/">Go Back</a>
             </div>
         </div>
     </div>

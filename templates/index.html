@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="static/styles.css">
+    <link rel="stylesheet" href="/static/styles.css">
     <title>Welcome to WellnessConnect!</title>
 </head>
 
@@ -21,19 +21,27 @@
             <div id="user">
                 <h3>LOGIN</h3>
                 <br>
-                <form action="/home" method="POST">
-                    Username <br>
-                    <input type="text" id="username" name="username" required>
+                <form action="/login" method="POST">
+                    Email <br>
+                    <input type="text" id="email" name="email" required>
                     <br>
                     Password <br>
                     <input type="password" id="password" name="password" required>
                     <br>
                     <button type="submit" id="login">Sign In</button>
+
+                    {% if error %}
+                        <p style="color: red; text-align: center; padding-top: 10px;">
+                            Invalid email or password.<br>
+                            Please try again.
+                        </p>
+                    {% endif %}
+
                 </form>
                 <br>
     
                 <h3>Not a User?</h3>
-                <a id="user_register" href="templates/user_register.html">Signup</a>
+                <a id="user_register" href="/user_register">Signup</a>
     
                 <!-- for testing purposes -->
                 <a id="user_register" href="templates/homepage.html">Continue as Guest</a>
