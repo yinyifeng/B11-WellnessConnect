@@ -25,13 +25,37 @@
         </button>
     </div>
 
-    <div>
-        <h1>
-            <img id="wellness_icon" src="/static/wellness_icon.png" width="40px">
-            WellnessConnect
-        </h1>
-    </div>
+    <div class="page-content">
+        <div>
+            <h1>
+                <img id="wellness_icon" src="/static/wellness_icon.png" width="40px" alt="Icon">
+                WellnessConnect
+            </h1>    
+        </div>
 
+        <main class="main-content" id="reminder-container">
+            <form id="reminder-form">
+                <label for="activity">Activity:</label>
+                <input type="text" id="activity" name="activity" required>
+    
+                <label for="notes">Notes:</label>
+                <input type="text" id="notes" name="notes">
+                
+                <label for="date">Date:</label>
+                <input type="date" id="date" name="date" required>
+                
+                <label for="time">Time:</label>
+                <input type="time" id="time" name="time" required>
+                
+                <button class="reminder-button" type="submit">Create</button>
+            </form>
+            <section id="reminder-list">
+                <h3>Reminders</h3>
+                <ul id="reminders"></ul>
+            </section>
+        </main>
+    </div>
+    
     <script src="/static/script.js"></script>
 
 </body>

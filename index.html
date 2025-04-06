@@ -9,33 +9,35 @@
 </head>
 
 <body id="login_page">
-    <div>
-        <h1>
-            <img id="wellness_icon" src="/static/wellness_icon.png" width="40px">
-            WellnessConnect
-        </h1>
-    </div>
-
-    <div class="logins">
-        <div id="user">
-            <h3>LOGIN</h3>
-            <br>
-            <form action="/home" method="POST">
-                Username <br>
-                <input type="text" id="username" name="username" required>
+    <div class="page-content">
+        <div>
+            <h1>
+                <img id="wellness_icon" src="/static/wellness_icon.png" width="40px">
+                WellnessConnect
+            </h1>
+        </div>
+    
+        <div class="main-content" id="logins-container">
+            <div id="user">
+                <h3>LOGIN</h3>
                 <br>
-                Password <br>
-                <input type="password" id="password" name="password" required>
+                <form action="/home" method="POST">
+                    Username <br>
+                    <input type="text" id="username" name="username" required>
+                    <br>
+                    Password <br>
+                    <input type="password" id="password" name="password" required>
+                    <br>
+                    <button type="submit" id="login">Sign In</button>
+                </form>
                 <br>
-                <button type="submit" id="login">Sign In</button>
-            </form>
-            <br>
-
-            Not a User?
-            <a id="user_register" href="templates/user_register.html">Signup</a>
-
-            <!-- for testing purposes -->
-            <a id="user_register" href="templates/homepage.html">Continue as Guest</a>
+    
+                Not a User?
+                <a id="user_register" href="templates/user_register.html">Signup</a>
+    
+                <!-- for testing purposes -->
+                <a id="user_register" href="templates/homepage.html">Continue as Guest</a>
+            </div>
         </div>
     </div>
 </body>

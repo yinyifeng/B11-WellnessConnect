@@ -25,12 +25,51 @@
         </button>
     </div>
 
-    <div>
-        <h1>
-            <img id="wellness_icon" src="/static/wellness_icon.png" width="40px">
-            WellnessConnect
-        </h1>
+    <div class="page-content">
+        <div>
+            <h1>
+                <img id="wellness_icon" src="/static/wellness_icon.png" width="40px" alt="Icon">
+                WellnessConnect
+            </h1>    
+        </div>
+
+        <main class="main-content" id="voucher-container">
+            <div class="voucher-header">
+                <h3>VOUCHER STORE</h3>
+                <div class="points">
+                  <span class="points-icon material-symbols-outlined">trophy</span>
+                  <span id="points-count">###</span>
+                </div>
+              </div>
+              
+              <div class="search-container">
+                <form>
+                  <div class="search">
+                    <span class="search-icon material-symbols-outlined">search</span>
+                    <input class="search-input" type="search" placeholder="Search">
+                  </div>
+                </form>
+              </div>
+          
+              <div class="voucher-container">
+                <div class="voucher-card">
+                  <!--example voucher card-->
+                  <div class="voucher-card-header">
+                    <img src="/static/wellness_icon.png" alt="Company Logo" class="voucher-logo">
+                    <span class="voucher-company">Company Name</span>
+                    <span class="voucher-id">#ID123</span>
+                  </div>
+                  <p class="voucher-description">Voucher Description!</p>
+                  <div class="voucher-divider"></div>
+                  <div class="voucher-footer">
+                    <span class="voucher-points">$: 200 points</span>
+                    <button class="redeem-button">Buy</button>
+                  </div>
+                </div>
+              </div>
+        </main>
     </div>
+    
 
     <script src="/static/script.js"></script>
 

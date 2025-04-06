@@ -17,27 +17,21 @@ h1 {
     margin-top: 20px;
 }
 
-/* Login and signup containers */
-.logins, .register-container {
-    display: flex;
-    justify-content: center;
+#register-container, #logins-container {
+    width: 100%;
+    max-width: 350px;
     align-items: center;
-    min-height: 100vh;
-    padding-bottom: 30px;
+
 }
 
-#user, #user-register {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 30px;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
-    width: 350px;
-    background: white;
-    margin: 20px auto;
+#user-register h3, #user h3{
+    text-align: center;
 }
+#user
+.user-register-labels{
+    padding-top: 20px;
+}
+
 
 /* Input */
 input {
@@ -193,15 +187,8 @@ body {
 }
 
 /* ------Leaderboard Section------ */
-.leaderboard-container {
-    width: 100%;
-    max-width: 800px;
-    margin: 20px auto;
+#leaderboard-container {
     text-align: center;
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .leaderboard {
@@ -218,4 +205,26 @@ body {
 .leaderboard th {
     background-color: #9fa2a6;
     color: white;
+}
+
+/* MAIN CONTENT GLOBAL */
+.main-content {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+
+    width: 100%;
+    max-width: 800px;
+    margin: 20px auto;
+}
+
+.page-content {
+    padding: 0px 20px 0px 20px;
+    margin-left: 60px; /* default sidebar width */
+    transition: margin-left 0.3s ease;
+}
+
+.sidebar.expanded ~ .page-content {
+    margin-left: 220px; /* expanded sidebar width */
 }
