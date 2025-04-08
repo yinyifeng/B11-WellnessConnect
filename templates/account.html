@@ -34,32 +34,93 @@
         </div>
 
         <main class="main-content" id="account-dashboard">
-            <div class="title">
-                <h1>User Dashboard</h1>
+            <div id="dashboard-title">
+                <h2>User Dashboard</h2>
             </div>
             
-            <div class="content">
+            <div class="dashboard-grid">
                 
-                <h2>Name: {{ first_name }} {{ last_name }}</h2>
-                
-                <div class="info">
-                    <div>
-                        <h4>My Info:</h4>
+                <div class="dashboard-left-column">
+                    {% if user.profile_picture %}
+                    <div class="profile-pic-wrapper" onclick="openModal()">
+                        <img src="{{ url_for('static', filename=user.profile_picture) }}" alt="Profile Picture" class="rounded-profile">
+                        <div class="edit-overlay">
+                            <img src="/static/icons/edit.png" alt="Edit Icon">
+                        </div>
+                    </div>
+
+                    {% else %}
+                    <div class="profile-pic-wrapper" onclick="openModal()">
+                        <img src="/static/icons/user_icon.png" alt="Profile Picture" class="rounded-profile">
+                        <div class="edit-overlay">
+                            <img src="/static/icons/edit.png" alt="Edit Icon">
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Profile Picture Upload Modal -->
+                    <div id="uploadModal" class="modal">
+                        <div class="modal-content">
+                        <span class="close" onclick="closeModal()">&times;</span>
+                        
+                        <!-- Remove Form (separate!) -->
+                        {% if user.profile_picture %}
+                        <form action="{{ url_for('remove_profile_pic') }}" method="POST">
+                          <button type="submit" class="remove-btn">Remove Profile Picture</button>
+                        </form>
+                        {% endif %}
+
+                        <form action="{{ url_for('upload_profile_pic') }}" method="POST" enctype="multipart/form-data">
+                            <input type="file" name="profile_pic" accept="image/*" required onchange="previewImage(event)">
+                            <br><br>
+                            <img id="imagePreview" src="#" alt="Image Preview" style="display:none; max-width:100%; border-radius: 10px; margin-bottom: 10px;">
+                            <button type="submit">Upload</button>
+
+                            {% with messages = get_flashed_messages() %}
+                                {% if messages %}
+                                    <div class="flash-messages" style="color: red; padding-top: 10px;">
+                                    {% for message in messages %}
+                                        <p>{{ message }}</p>
+                                    {% endfor %}
+                                    </div>
+                                {% endif %}
+                            {% endwith %}
+
+                        </form>
+                        
+                        </div>
+                    </div>
+                    <br>
+                    <h3><u>{{ user.first_name }} {{ user.last_name }}</u></h3>
+  
+
+                </div>
+
+                <div class="dashboard-right-column">
+                    <div class="info">
+                        <h4>Contact Info:</h4>
+                        <p>Email: {{ user.email }}</p>
+                        <p>Phone: {{ user.primary_phone_number }}</p>
+                        <br>
                         <a href="/vouchers">My vouchers</a>
                         <br>
                         <a href="#">My plans</a>
-                    </div>
-                    <div>
-                        <h4>Contact Info:</h4>
-                        <p>Email: {{ email }}</p>
-                        <p>Phone: {{ phone }}</p>
+
                     </div>
                 </div>
+
             </div>
+
         </main>
     </div>
     
+    {% with messages = get_flashed_messages() %}
+    <script>
+        window.hasFlashMessage = "{{ 'true' if messages else 'false' }}";
+    </script>
+    {% endwith %}
 
+    
     <script src="/static/script.js"></script>
 
 </body>
