@@ -12,7 +12,7 @@
     <div class="page-content">
         <div>
             <h1>
-                <img id="wellness_icon" src="/static/wellness_icon.png" width="40px">
+                <img id="wellness_icon" src="/static/icons/logo.png" width="40px">
                 WellnessConnect
             </h1>
         </div>
@@ -35,9 +35,15 @@
     
                     <button class="signup-button" type="submit">Signup</button>
 
-                    {% if success %}
-                        <p style="color: green; text-align: center; padding-top: 10px;">{{ success }}</p>
-                    {% endif %}
+                    {% with messages = get_flashed_messages() %}
+                        {% if messages %}
+                            <div class="flash-messages" style="color: red; padding-top: 10px;">
+                            {% for message in messages %}
+                                <p>{{ message }}</p>
+                            {% endfor %}
+                            </div>
+                        {% endif %}
+                    {% endwith %}
 
                 </form>
     

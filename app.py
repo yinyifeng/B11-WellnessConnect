@@ -4,6 +4,7 @@ from extensions import db
 from schema import User
 from datetime import datetime
 from werkzeug.utils import secure_filename
+from sqlalchemy import func
 
 app = Flask(__name__)
 app.secret_key = 'b11_secret_key'
@@ -31,17 +32,28 @@ def start_app():
 
 @app.route('/login', methods=['POST'])
 def login():
-    email = request.form['email']
-    password = request.form['password']
+    email = request.form.get('email')
+    password = request.form.get('password')
+
+    if not email or not password:
+        return render_template('index.html', error="Missing email or password.")
+
     hashed_password = hashlib.md5(password.encode()).hexdigest()
 
     user = User.query.filter_by(email=email, password=hashed_password).first()
 
     if user:
         session['email'] = email
-        return render_template('homepage.html')
+        session['role'] = user.role
+
+        if user.role == 'SystemAdmin':
+            return render_template('admin_homepage.html', user=user)
+        elif user.role == 'CompanyAdmin':
+            return render_template('companyAdmin_homepage.html', user=user)
+        else:
+            return render_template('homepage.html', user=user)
     else:
-        return render_template('index.html', error=True)
+        return render_template('index.html', error=True)  # Invalid login
 
 @app.route('/user_register')
 def user_register():
@@ -56,6 +68,11 @@ def register():
     first_name = request.form['first_name']
     last_name = request.form['last_name']
     dob = datetime.strptime(request.form['date_of_birth'], "%Y-%m-%d")
+
+    existing_user = User.query.filter(func.lower(User.email) == email.lower()).first()
+    if existing_user:
+        flash('An account with that email already exists.')
+        return redirect(url_for('user_register'))
 
     new_user = User(
         email=email,
@@ -82,6 +99,38 @@ def account_dashboard():
 
     user = User.query.filter_by(email=session['email']).first()
     return render_template("account.html", user=user)
+
+@app.route('/admin_homepage')
+def admin_homepage():
+    if 'email' not in session:
+        return redirect(url_for('start_app'))
+
+    user = User.query.filter_by(email=session['email']).first()
+    return render_template("admin_homepage.html", user=user)
+
+@app.route('/admin_account')
+def admin_account():
+    if 'email' not in session:
+        return redirect(url_for('start_app'))
+
+    user = User.query.filter_by(email=session['email']).first()
+    return render_template("admin_account.html", user=user)
+
+@app.route('/companyAdmin_homepage')
+def companyAdmin_homepage():
+    if 'email' not in session:
+        return redirect(url_for('start_app'))
+
+    user = User.query.filter_by(email=session['email']).first()
+    return render_template("companyAdmin_homepage.html", user=user)
+
+@app.route('/companyAdmin_account')
+def companyAdmin_account():
+    if 'email' not in session:
+        return redirect(url_for('start_app'))
+
+    user = User.query.filter_by(email=session['email']).first()
+    return render_template("companyAdmin_account.html", user=user)
 
 @app.route('/upload_profile_pic', methods=['POST'])
 def upload_profile_pic():
