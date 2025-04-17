@@ -35,14 +35,47 @@ function previewImage(event) {
 }
 
 window.onclick = function(event) {
-    const modal = document.getElementById("uploadModal");
-    if (event.target == modal) {
+    const uploadModal = document.getElementById("uploadModal");
+    const proofModal = document.getElementById("proofModal");
+
+    if (event.target === uploadModal) {
         closeModal();
+    } else if (event.target === proofModal) {
+        closeProofModal();
     }
-}
+};
+
 
 window.onload = function () {
     if (window.hasFlashMessage === 'true') {
         openModal();
     }
 };
+
+function openProofModal(imageUrl) {
+    const modal = document.getElementById('proofModal');
+    const img = document.getElementById('proofImagePreview');
+    img.src = imageUrl;
+    modal.style.display = 'block';
+}
+
+function closeProofModal() {
+    const modal = document.getElementById('proofModal');
+    modal.style.display = 'none';
+    document.getElementById('proofImagePreview').src = '#';
+}
+
+function toggleLogSection(rowClass, button) {
+    const rows = document.querySelectorAll(`.${rowClass}`);
+    const isExpanding = button.textContent === "Show All";
+
+    rows.forEach((row, index) => {
+        if (index > 0) {
+            row.style.display = isExpanding ? 'table-row' : 'none';
+        }
+    });
+
+    button.textContent = isExpanding ? "Hide" : "Show All";
+}
+
+

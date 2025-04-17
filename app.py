@@ -15,11 +15,13 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Setup for uploading profile pictures
 app.config['UPLOAD_FOLDER'] = os.path.join('static', 'profile_pics')
+app.config['PROOF_FOLDER'] = os.path.join('static', 'proof_pics')
+
 app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024  # limit file size to 2MB
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
-
+os.makedirs(app.config['PROOF_FOLDER'], exist_ok=True)
 
 def allowed_filetype(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -240,6 +242,15 @@ def log_activity():
         return redirect(url_for('start_app'))
 
     data = request.form
+    file = request.files.get('proof_image')
+
+    proof_path = None
+    if file and file.filename:
+        filename = secure_filename(file.filename)
+        unique_name = f"{uuid.uuid4().hex}_{filename}"
+        save_path = os.path.join(app.config['PROOF_FOLDER'], unique_name)
+        file.save(save_path)
+        proof_path = f"proof_pics/{unique_name}"
 
     log = ActivityLog(
         user_id=user.user_id,
@@ -247,12 +258,14 @@ def log_activity():
         value=data['value'],
         unit=data.get('unit'),
         exercise_type=data.get('exercise_type') or None,
-        proof=False,
-        proof_valid=None
+        proof=True if file else False,
+        proof_valid=None if file else False,
+        proof_url=proof_path
     )
 
     db.session.add(log)
     db.session.commit()
+
     return redirect(url_for('my_activities'))
 
 @app.route('/vouchers')

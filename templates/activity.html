@@ -46,10 +46,23 @@
                             <input type="hidden" name="unit" value="oz">
                             <input type="text" name="value" placeholder="Enter water intake" required>
                         
+                            <input type="file" name="proof_image" id="proofInput" accept="image/*" style="display: none;" onchange="previewImageAndOpenModal(event)">
+                        
                             <label>Upload proof:</label>
-                            <button type="button" class="upload-proof-btn" onclick="openModal()">Upload Proof</button>
+                            <button type="button" onclick="document.getElementById('proofInput').click()">Choose File</button>
+                        
+                            <div id="uploadModal" class="modal">
+                                <div class="modal-content">
+                                    <span class="close" onclick="closeModal()">&times;</span>
+                                    <img id="imagePreview" src="#" alt="Image Preview" style="display:none; max-width:100%; border-radius: 10px; margin-bottom: 10px;">
+                                </div>
+                            </div>
+                        
                             <button type="submit">Log Water</button>
-                        </form>                        
+                        </form>
+                        
+                        
+                        
                     </div>
             
                     <!-- Steps -->

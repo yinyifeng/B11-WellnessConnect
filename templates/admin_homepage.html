@@ -50,14 +50,22 @@
                     </thead>
                     <tbody>
                         {% for log in pending_logs %}
-                        <tr>
+                        <tr class="pending-log-row {% if not loop.first %}hidden-row{% endif %}">
                             <td>{{ log.user_id }}</td>
                             <td>{{ log.logged_at.strftime('%Y-%m-%d %H:%M') }}</td>
                             <td>{{ log.activity_type }}</td>
                             <td>{{ log.value }}</td>
                             <td>{{ log.unit or '' }}</td>
                             <td>{{ log.exercise_type or '—' }}</td>
-                            <td>Yes</td>
+                            <td>
+                                {% if log.proof_url %}
+                                    <button type="button" onclick="openProofModal('{{ url_for('static', filename=log.proof_url) }}')">
+                                        View
+                                    </button>
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </td>
                             <td>Pending</td>
                             <td>
                                 <form method="post" action="{{ url_for('approve_proof', log_id=log.log_id) }}">
@@ -69,8 +77,11 @@
                             </td>
                         </tr>
                         {% endfor %}
+
                     </tbody>
                 </table>
+                
+                <button class="toggle-btn" onclick="toggleLogSection('pending-log-row', this)">Show All</button>
             </div>
 
             <!-- APPROVED LOGS -->
@@ -91,7 +102,7 @@
                     </thead>
                     <tbody>
                         {% for log in approved_logs %}
-                        <tr>
+                        <tr class="approved-log-row {% if not loop.first %}hidden-row{% endif %}">
                             <td>{{ log.user_id }}</td>
                             <td>{{ log.logged_at.strftime('%Y-%m-%d %H:%M') }}</td>
                             <td>{{ log.activity_type }}</td>
@@ -104,6 +115,7 @@
                         {% endfor %}
                     </tbody>
                 </table>
+                <button class="toggle-btn" onclick="toggleLogSection('approved-log-row', this)">Show All</button>
             </div>
 
             <!-- REJECTED / NO PROOF -->
@@ -124,7 +136,7 @@
                     </thead>
                     <tbody>
                         {% for log in rejected_logs %}
-                        <tr>
+                        <tr class="rejected-log-row {% if not loop.first %}hidden-row{% endif %}">
                             <td>{{ log.user_id }}</td>
                             <td>{{ log.logged_at.strftime('%Y-%m-%d %H:%M') }}</td>
                             <td>{{ log.activity_type }}</td>
@@ -137,6 +149,15 @@
                         {% endfor %}
                     </tbody>
                 </table>
+                <button class="toggle-btn" onclick="toggleLogSection('rejected-log-row', this)">Show All</button>
+            </div>
+
+            <!-- Admin Proof Modal -->
+            <div id="proofModal" class="modal">
+                <div class="modal-content">
+                <span class="close" onclick="closeProofModal()">&times;</span>
+                <img id="proofImagePreview" src="#" alt="Proof Image" style="max-width: 100%; border-radius: 10px;">
+                </div>
             </div>
 
         </main>
