@@ -30,29 +30,115 @@
             WellnessConnect
         </h1>
 
-        <main class="main-content" id="leaderboard-container">
-            <h2>Leaderboard</h2>
+        <main class="admin-activity-content">
+            <!-- PENDING LOGS -->
+            <div class="activity-table">
+                <h2>Pending Activity Logs</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>User ID</th>
+                            <th>Logged At</th>
+                            <th>Activity</th>
+                            <th>Value</th>
+                            <th>Unit</th>
+                            <th>Exercise Type</th>
+                            <th>Proof</th>
+                            <th>Proof Valid</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for log in pending_logs %}
+                        <tr>
+                            <td>{{ log.user_id }}</td>
+                            <td>{{ log.logged_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                            <td>{{ log.activity_type }}</td>
+                            <td>{{ log.value }}</td>
+                            <td>{{ log.unit or '' }}</td>
+                            <td>{{ log.exercise_type or '—' }}</td>
+                            <td>Yes</td>
+                            <td>Pending</td>
+                            <td>
+                                <form method="post" action="{{ url_for('approve_proof', log_id=log.log_id) }}">
+                                    <button type="submit">Approve</button>
+                                </form>
+                                <form method="post" action="{{ url_for('reject_proof', log_id=log.log_id) }}">
+                                    <button type="submit">Reject</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
 
-            <!-- Filter Options -->
-            <label for="filter">Sort By:</label>
-            <select id="filter">
-                <option value="highest">Highest Points</option>
-                <option value="lowest">Lowest Points</option>
-            </select>
+            <!-- APPROVED LOGS -->
+            <div class="activity-table">
+                <h2>Approved Activity Logs</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>User ID</th>
+                            <th>Logged At</th>
+                            <th>Activity</th>
+                            <th>Value</th>
+                            <th>Unit</th>
+                            <th>Exercise Type</th>
+                            <th>Proof</th>
+                            <th>Proof Valid</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for log in approved_logs %}
+                        <tr>
+                            <td>{{ log.user_id }}</td>
+                            <td>{{ log.logged_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                            <td>{{ log.activity_type }}</td>
+                            <td>{{ log.value }}</td>
+                            <td>{{ log.unit or '' }}</td>
+                            <td>{{ log.exercise_type or '—' }}</td>
+                            <td>Yes</td>
+                            <td>Valid</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
 
-            <!-- Leaderboard Table -->
-            <table class="leaderboard">
-                <thead>
-                    <tr>
-                        <th>Rank</th>
-                        <th>User</th>
-                        <th>Points</th>
-                    </tr>
-                </thead>
-                <tbody id="leaderboard-body">
-                    <!-- Users will be dynamically inserted here -->
-                </tbody>
-            </table>
+            <!-- REJECTED / NO PROOF -->
+            <div class="activity-table">
+                <h2>Rejected/No-Proof Activity Logs</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>User ID</th>
+                            <th>Logged At</th>
+                            <th>Activity</th>
+                            <th>Value</th>
+                            <th>Unit</th>
+                            <th>Exercise Type</th>
+                            <th>Proof</th>
+                            <th>Proof Valid</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for log in rejected_logs %}
+                        <tr>
+                            <td>{{ log.user_id }}</td>
+                            <td>{{ log.logged_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                            <td>{{ log.activity_type }}</td>
+                            <td>{{ log.value }}</td>
+                            <td>{{ log.unit or '' }}</td>
+                            <td>{{ log.exercise_type or '—' }}</td>
+                            <td>{{ 'Yes' if log.proof else 'No' }}</td>
+                            <td>Rejected</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
         </main>
     </div>
 

@@ -1,7 +1,7 @@
-from flask import Flask, request, render_template, redirect, url_for, session, flash
+from flask import Flask, request, render_template, redirect, url_for, session, flash, jsonify
 import hashlib, os, uuid
 from extensions import db
-from schema import User
+from schema import *
 from datetime import datetime
 from werkzeug.utils import secure_filename
 from sqlalchemy import func
@@ -47,11 +47,12 @@ def login():
         session['role'] = user.role
 
         if user.role == 'SystemAdmin':
-            return render_template('admin_homepage.html', user=user)
+            return redirect(url_for('admin_homepage'))
         elif user.role == 'CompanyAdmin':
             return render_template('companyAdmin_homepage.html', user=user)
         else:
-            return render_template('homepage.html', user=user)
+            logs = ActivityLog.query.filter_by(user_id=user.user_id).order_by(ActivityLog.logged_at.desc()).all()
+            return render_template('homepage.html', user=user, logs=logs)
     else:
         return render_template('index.html', error=True)  # Invalid login
 
@@ -90,7 +91,14 @@ def register():
 
 @app.route('/homepage')
 def homepage():
-    return render_template('homepage.html')
+    if 'email' not in session:
+        return redirect(url_for('start_app'))
+    
+    user = User.query.filter_by(email=session['email']).first()
+    logs = ActivityLog.query.filter_by(user_id=user.user_id).order_by(ActivityLog.logged_at.desc()).all()
+
+    return render_template('homepage.html', user=user, logs=logs)
+
 
 @app.route('/account_dashboard')
 def account_dashboard():
@@ -106,7 +114,21 @@ def admin_homepage():
         return redirect(url_for('start_app'))
 
     user = User.query.filter_by(email=session['email']).first()
-    return render_template("admin_homepage.html", user=user)
+    if not user or user.role != 'SystemAdmin':
+        return redirect(url_for('start_app'))
+
+    all_logs = ActivityLog.query.order_by(ActivityLog.logged_at.desc()).all()
+
+    pending_logs = [log for log in all_logs if log.proof and log.proof_valid is None]
+    approved_logs = [log for log in all_logs if log.proof and log.proof_valid is True]
+    rejected_logs = [log for log in all_logs if not log.proof or log.proof_valid is False]
+
+    return render_template(
+        'admin_homepage.html',
+        pending_logs=pending_logs,
+        approved_logs=approved_logs,
+        rejected_logs=rejected_logs
+    )
 
 @app.route('/admin_account')
 def admin_account():
@@ -115,6 +137,20 @@ def admin_account():
 
     user = User.query.filter_by(email=session['email']).first()
     return render_template("admin_account.html", user=user)
+
+@app.route('/approve_proof/<int:log_id>', methods=['POST'])
+def approve_proof(log_id):
+    log = ActivityLog.query.get_or_404(log_id)
+    log.proof_valid = True
+    db.session.commit()
+    return redirect(url_for('admin_homepage'))
+
+@app.route('/reject_proof/<int:log_id>', methods=['POST'])
+def reject_proof(log_id):
+    log = ActivityLog.query.get_or_404(log_id)
+    log.proof_valid = False
+    db.session.commit()
+    return redirect(url_for('admin_homepage'))
 
 @app.route('/companyAdmin_homepage')
 def companyAdmin_homepage():
@@ -180,9 +216,44 @@ def large_file_handler(error):
     flash("File too large. Please upload a file smaller than 2MB")
     return redirect(url_for('account_dashboard'))
 
+@app.route('/my-activities')
+def my_activities():
+    if 'email' not in session:
+        return redirect(url_for('start_app'))
+
+    user = User.query.filter_by(email=session['email']).first()
+    logs = ActivityLog.query.filter_by(user_id=user.user_id).order_by(ActivityLog.logged_at.desc()).all()
+
+    return render_template('homepage.html', logs=logs)
+
 @app.route('/activity_tracker')
 def activity_tracker():
     return render_template('activity.html')
+
+@app.route('/log-activity', methods=['POST'])
+def log_activity():
+    if 'email' not in session:
+        return redirect(url_for('start_app'))
+
+    user = User.query.filter_by(email=session['email']).first()
+    if not user:
+        return redirect(url_for('start_app'))
+
+    data = request.form
+
+    log = ActivityLog(
+        user_id=user.user_id,
+        activity_type=data['activity_type'],
+        value=data['value'],
+        unit=data.get('unit'),
+        exercise_type=data.get('exercise_type') or None,
+        proof=False,
+        proof_valid=None
+    )
+
+    db.session.add(log)
+    db.session.commit()
+    return redirect(url_for('my_activities'))
 
 @app.route('/vouchers')
 def vouchers():

@@ -35,37 +35,68 @@
 
         <main class="main-content" id="activity-container">
             <h1>Tracker</h1>
-            <div class="date">
-                <input type="date">
-            </div> 
             <div class="insights">
                 <div class="list-container">
+                    
+                    <!-- Water Intake -->
                     <div class="box">
                         <h3>Water Intake</h3>
-                        <input type="text" placeholder="Enter water intake" class="input">
-                        <span class="unit">Gallons</span>
+                        <form action="{{ url_for('log_activity') }}" method="POST" enctype="multipart/form-data">
+                            <input type="hidden" name="activity_type" value="water">
+                            <input type="hidden" name="unit" value="oz">
+                            <input type="text" name="value" placeholder="Enter water intake" required>
+                        
+                            <label>Upload proof:</label>
+                            <button type="button" class="upload-proof-btn" onclick="openModal()">Upload Proof</button>
+                            <button type="submit">Log Water</button>
+                        </form>                        
                     </div>
+            
+                    <!-- Steps -->
                     <div class="box">
                         <h3>Steps</h3>
-                        <input type="text" placeholder="Enter number of steps taken" class="input">
-                        <span class="unit">Steps</span>
+                        <form method="POST" action="/log-activity">
+                            <input type="hidden" name="activity_type" value="steps">
+                            <input type="hidden" name="unit" value="steps">
+                            <input type="text" name="value" placeholder="Enter number of steps taken" class="input">
+                            <span class="unit">Steps</span>
+                            <button type="submit">Log Steps</button>
+                        </form>
                     </div>
+            
+                    <!-- Exercise -->
                     <div class="box">
                         <h3>Exercises</h3>
-                        <input type="text" placeholder="Enter exercises done" class="input">
+                        <form method="POST" action="/log-activity">
+                            <input type="hidden" name="activity_type" value="exercise">
+                            <input type="text" name="value" placeholder="Enter exercises done" class="input">
+                            <label>Exercise Type:
+                                <select name="exercise_type">
+                                    <option value="">--Optional--</option>
+                                    <option value="yoga">Yoga</option>
+                                    <option value="run">Run</option>
+                                    <option value="cycling">Cycling</option>
+                                    <option value="strength">Strength</option>
+                                </select>
+                            </label><br><br>
+                            <button type="submit">Log Exercise</button>
+                        </form>
                     </div>
+            
+                    <!-- Sleep -->
                     <div class="box">
                         <h3>Sleep</h3>
-                        <input type="text" placeholder="Enter hours of sleep" class="input">
-                        <span class="unit">Hours</span>
-    
+                        <form method="POST" action="/log-activity">
+                            <input type="hidden" name="activity_type" value="sleep">
+                            <input type="hidden" name="unit" value="hours">
+                            <input type="text" name="value" placeholder="Enter hours of sleep" class="input">
+                            <span class="unit">Hours</span>
+                            <button type="submit">Log Sleep</button>
+                        </form>
                     </div>
-                    <div class="box">
-                        <h3>Mental Health Improvement</h3>
-                        <input type="text" placeholder="Enter activity" class="input">
-                    </div>
+            
                 </div>
-            </div> 
+            </div>                     
         </main>
     </div>
     

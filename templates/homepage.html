@@ -30,29 +30,67 @@
             WellnessConnect
         </h1>
 
-        <main class="main-content" id="leaderboard-container">
-            <h2>Leaderboard</h2>
+        <main class="main-content">
+            <div>
+                <h2>Your Activity Logs</h2>
 
-            <!-- Filter Options -->
-            <label for="filter">Sort By:</label>
-            <select id="filter">
-                <option value="highest">Highest Points</option>
-                <option value="lowest">Lowest Points</option>
-            </select>
+                {% if logs %}
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Logged At</th>
+                                <th>Activity</th>
+                                <th>Value</th>
+                                <th>Unit</th>
+                                <th>Exercise Type</th>
+                                <th>Proof</th>
+                                <th>Proof Valid</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for log in logs %}
+                            <tr>
+                                <td>{{ log.logged_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                                <td>{{ log.activity_type }}</td>
+                                <td>{{ log.value }}</td>
+                                <td>{{ log.unit or '' }}</td>
+                                <td>{{ log.exercise_type or '—' }}</td>
+                                <td>{{ 'Yes' if log.proof else 'No' }}</td>
+                                <td>{{ 'Valid' if log.proof_valid else 'Pending' }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p class="no-logs">You haven't logged any activities yet.</p>
+                {% endif %}
+            </div>
+            
+            <div>
+                <h2>Leaderboard</h2>
 
-            <!-- Leaderboard Table -->
-            <table class="leaderboard">
-                <thead>
-                    <tr>
-                        <th>Rank</th>
-                        <th>User</th>
-                        <th>Points</th>
-                    </tr>
-                </thead>
-                <tbody id="leaderboard-body">
-                    <!-- Users will be dynamically inserted here -->
-                </tbody>
-            </table>
+                <!-- Filter Options -->
+                <label for="filter">Sort By:</label>
+                <select id="filter">
+                    <option value="highest">Highest Points</option>
+                    <option value="lowest">Lowest Points</option>
+                </select>
+
+                <!-- Leaderboard Table -->
+                <table class="leaderboard">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>User</th>
+                            <th>Points</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboard-body">
+                        <!-- Users will be dynamically inserted here -->
+                    </tbody>
+                </table>
+            </div>
+
         </main>
     </div>
 

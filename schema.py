@@ -6,7 +6,7 @@ from sqlalchemy import Enum
 class User(db.Model):
     __tablename__ = 'users'
 
-    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(128), nullable=False)
     primary_phone_number = db.Column(db.String(20))
@@ -24,35 +24,73 @@ class User(db.Model):
         return "<User {}>".format(self.email)
 
 
-class HealthTracking(db.Model):
-    __tablename__ = 'health_tracking'
+class ActivityLog(db.Model):
+    __tablename__ = 'activity_log'
 
-    id = db.Column(db.Integer, primary_key=True)
-    
-    ounces_water = db.Column(db.Float)      
-    num_steps = db.Column(db.Integer)    
-    activity_type = db.Column(db.String(100)) 
-    hours_sleep = db.Column(db.Float)
+    log_id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id', ondelete='CASCADE'), nullable=False)
+
+    activity_type = db.Column(
+        Enum('water', 'steps', 'exercise', 'sleep', name='activity_type_enum'),
+        nullable=False
+    )
+    value = db.Column(db.Numeric, nullable=False)
+
+    unit = db.Column(
+        Enum('oz', 'steps', 'miles', 'hours', 'min', 'km', name='unit_enum'),
+        nullable=True
+    )
+
+    exercise_type = db.Column(
+        Enum('yoga', 'run', 'cycling', 'strength', name='exercise_type_enum'),
+        nullable=True
+    )
+
     proof = db.Column(db.Boolean, default=False)
-    proof_valid = db.Column(db.Boolean, default=False)
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    proof_valid = db.Column(db.Boolean, nullable=True)
+    proof_url = db.Column(db.String(255), nullable=True)
+
+    logged_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     def addWater(self, ounces_water, proof=False):
-        self.gallons_water = (self.gallons_water or 0) + ounces_water
+        self.activity_type = 'water'
+        self.value = ounces_water
+        self.unit = 'oz'
+        self.exercise_type = None
         self.proof = proof
-        return self.ounces_water
+        self.proof_valid = None if proof else False
+        return self.value
 
     def addSteps(self, num_steps, proof=False):
-        self.num_steps = (self.num_steps or 0) + num_steps
+        self.activity_type = 'steps'
+        self.value = num_steps
+        self.unit = 'steps'
+        self.exercise_type = None
         self.proof = proof
-        return self.num_steps
+        self.proof_valid = None if proof else False
+        return self.value
 
-    def addActivity(self, activity_type, proof=False):
+    def addActivity(self, activity_type, value, unit=None, exercise_type=None, proof=False):
         self.activity_type = activity_type
+        self.value = value
+        self.unit = unit
+        self.exercise_type = exercise_type
         self.proof = proof
-        return {"activity": self.activity_type, "proof": self.proof}
+        self.proof_valid = None if proof else False
+        return {
+            "activity": self.activity_type,
+            "exercise_type": self.exercise_type,
+            "value": self.value,
+            "unit": self.unit,
+            "proof": self.proof
+        }
 
     def addSleep(self, hours, proof=False):
-        self.hours_sleep = (self.hours_sleep or 0) + hours
+        self.activity_type = 'sleep'
+        self.value = hours
+        self.unit = 'hours'
+        self.exercise_type = None
         self.proof = proof
-        return self.hours_sleep
+        self.proof_valid = None if proof else False
+        return self.value
+
