@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
-
     <div class="sidebar">
         <button class="toggle-btn">
             <img src="/static/icons/menu.png" alt="Menu">
@@ -23,7 +22,22 @@
             <img src="/static/icons/logout.png" class="icon"><span>Logout</span>
         </button>
     </div>
-
+    <!-- Points Progress Tracker -->
+    <div class="points-tracker">
+        <div class="timeline-labels">
+            <span>0</span>
+            <span>250</span>
+            <span>500</span>
+            <span>750</span>
+            <span>1000</span>
+        </div>
+        <div class="timeline-bar">
+            <div class="progress-fill" style="width: {{ percentage }}%"></div>
+        </div>
+        <div class="points-display" id="points-display">
+            {{ current_user_points }} / 1000 
+        </div>
+    </div>
     <div class="page-content">
         <h1>
             <img id="wellness_icon" src="/static/wellness_icon.png" width="40px" alt="Icon">
@@ -36,9 +50,10 @@
             <!-- Filter Options -->
             <label for="filter">Sort By:</label>
             <select id="filter">
-                <option value="highest">Highest Points</option>
-                <option value="lowest">Lowest Points</option>
+                <option value="highest" {% if current_filter == 'highest' %}selected{% endif %}>Highest Points</option>
+                <option value="lowest" {% if current_filter == 'lowest' %}selected{% endif %}>Lowest Points</option>
             </select>
+
 
             <!-- Leaderboard Table -->
             <table class="leaderboard">
@@ -51,6 +66,13 @@
                 </thead>
                 <tbody id="leaderboard-body">
                     <!-- Users will be dynamically inserted here -->
+                    {% for user in leaderboard %}
+                    <tr>
+                      <td>{{ user.rank }}</td>
+                      <td>{{ user.username }}</td>
+                      <td>{{ user.points }}</td>
+                    </tr>
+                    {% endfor %}
                 </tbody>
             </table>
         </main>
